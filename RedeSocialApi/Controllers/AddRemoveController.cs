@@ -49,7 +49,7 @@ namespace RedeSocialApi.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpDelete]
         //[Authorize("Bearer")]
         [Route("deletaramigo")]
         public IActionResult DeletarAmigo(int usuario1_id,int usuario2_id){
@@ -128,7 +128,7 @@ namespace RedeSocialApi.Controllers
         }  
 
 
-        [HttpPost]
+        [HttpDelete]
         //[Authorize("Bearer")]
         [Route("deletarhistoria")]
         public IActionResult DeletarHistoria(THistoria historia){
@@ -154,7 +154,7 @@ namespace RedeSocialApi.Controllers
             }
         }      
 
-        [HttpPost]
+        [HttpDelete]
         //[Authorize("Bearer")]
         [Route("deletarcomentario")]
         public IActionResult DeletarComentario(TComentario comentario){
@@ -169,44 +169,55 @@ namespace RedeSocialApi.Controllers
 
         [HttpPost]
         //[Authorize("Bearer")]
-        [Route("like")]
-        public IActionResult Like(TLikeDislike like_dislike){
+        [Route("likedislike")]
+        public IActionResult LikeDislike(TLikeDislike like_dislike){
             try{
-                TLikeDislike existente = _context.TLikeDislike.Where(ld => ld.UserId == like_dislike.UserId && ld.HistoriaId == like_dislike.HistoriaId).First();
-                if(existente == null){
-                    _context.TLikeDislike.Add(like_dislike);
-                    _context.SaveChanges();
+                if(like_dislike.LikeDislike == true){
+                    bool existente = _context.TLikeDislike.Any(ld => ld.UserId == like_dislike.UserId && ld.HistoriaId == like_dislike.HistoriaId);
+                    if(!existente){
+                        _context.TLikeDislike.Add(like_dislike);
+                        _context.SaveChanges();
+                        return Json("Like inserido com sucesso!");
+                    }else{
+                        var temp = _context.TLikeDislike.Where(ld => ld.UserId == like_dislike.UserId && ld.HistoriaId == like_dislike.HistoriaId).First();
+                        temp.LikeDislike = true;
+                        _context.SaveChanges();
+                        return Json("Like atualizado com sucesso!");
+                    }
                 }else{
-                    existente.LikeDislike = true;
-                    _context.SaveChanges();
+                    bool existente = _context.TLikeDislike.Any(ld => ld.UserId == like_dislike.UserId && ld.HistoriaId == like_dislike.HistoriaId);
+                    if(!existente){
+                        _context.TLikeDislike.Add(like_dislike);
+                        _context.SaveChanges();
+                        return Json("Dislike inserido com sucesso!");
+                    }else{
+                        var temp = _context.TLikeDislike.Where(ld => ld.UserId == like_dislike.UserId && ld.HistoriaId == like_dislike.HistoriaId).First();
+                        temp.LikeDislike = false;
+                        _context.SaveChanges();
+                        return Json("Dislike atualizado com sucesso!");
+                    }                    
                 }
-                return StatusCode(200);
             }catch(Exception){
                 return StatusCode(500);
             }
         }      
 
-        [HttpPost]
+
+        [HttpDelete]
         //[Authorize("Bearer")]
-        [Route("dislike")]
-        public IActionResult Dislike(TLikeDislike like_dislike){
+        [Route("deletarlikedislike")]
+        public IActionResult DeletarLikeDislike(TLikeDislike like_dislike){
             try{
-                TLikeDislike existente = _context.TLikeDislike.Where(ld => ld.UserId == like_dislike.UserId && ld.HistoriaId == like_dislike.HistoriaId).First();
-                if(existente == null){
-                    _context.TLikeDislike.Add(like_dislike);
-                    _context.SaveChanges();
-                }else{
-                    existente.LikeDislike = false;
-                    _context.SaveChanges();
-                }
+                var remover = _context.TLikeDislike.Where(r => r.UserId == like_dislike.UserId && r.HistoriaId == like_dislike.HistoriaId).First();
+                _context.Remove(remover);
+                _context.SaveChanges();
                 return StatusCode(200);
             }catch(Exception){
                 return StatusCode(500);
             }
-        }     
-    
+        }              
 
-        
+    
         
     }
 }

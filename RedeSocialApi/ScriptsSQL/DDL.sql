@@ -154,6 +154,71 @@ end
 
 
 
+
+create trigger trg_t_like_dislike_au
+on t_like_dislike
+after update
+as
+begin
+	declare
+	@like_dislike bit,
+	@historia_id integer,
+	@current_like_dislike integer
+
+	select @like_dislike = like_dislike, @historia_id = historia_id from inserted
+
+	if @like_dislike = 1
+	begin
+		select @current_like_dislike = dislikes from t_historia  where id = @historia_id
+		set @current_like_dislike = @current_like_dislike - 1
+		update t_historia set dislikes = @current_like_dislike where id = @historia_id
+		select @current_like_dislike = likes from t_historia  where id = @historia_id
+		set @current_like_dislike = @current_like_dislike + 1
+		update t_historia set likes = @current_like_dislike where id = @historia_id
+		end
+	else
+	begin
+		select @current_like_dislike = likes from t_historia  where id = @historia_id
+		set @current_like_dislike = @current_like_dislike -1;
+		update t_historia set likes = @current_like_dislike where id = @historia_id
+		select @current_like_dislike = dislikes from t_historia  where id = @historia_id
+		set @current_like_dislike = @current_like_dislike +1;
+		update t_historia set dislikes = @current_like_dislike where id = @historia_id
+	end
+end
+
+
+
+create trigger trg_t_like_dislike_bd
+on t_like_dislike
+for delete
+as
+begin
+	declare
+	@like_dislike bit,
+	@historia_id integer,
+	@current_like_dislike integer
+
+	select @like_dislike = like_dislike, @historia_id = historia_id from deleted
+
+	if @like_dislike = 1
+	begin
+		select @current_like_dislike = likes from t_historia  where id = @historia_id
+		set @current_like_dislike = @current_like_dislike - 1
+		update t_historia set likes = @current_like_dislike where id = @historia_id
+		end
+	else
+	begin
+		select @current_like_dislike = dislikes from t_historia  where id = @historia_id
+		set @current_like_dislike = @current_like_dislike -1;
+		update t_historia set dislikes = @current_like_dislike where id = @historia_id
+	end
+end
+
+
+
+
+
 drop table t_usuario;
 drop table t_amizade;
 drop table t_historia;

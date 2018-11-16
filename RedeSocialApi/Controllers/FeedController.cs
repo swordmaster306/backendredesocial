@@ -33,12 +33,79 @@ namespace RedeSocialApi.Controllers
 
         [HttpGet]
         //[Authorize("Bearer")]
+        [Route("meusamigos/{id}")]
+        public IActionResult MeusAmigos(int id){
+            var amizades = _context.TAmizade.Where(a => (a.Usuario1 == id || a.Usuario2 == id) && a.Status == "Aprovada");
+            List<int> id_amigos = new List<int>();
+            foreach(TAmizade t in amizades){
+                if(t.Usuario1 == id){
+                    id_amigos.Add(t.Usuario2);
+                }else{
+                    id_amigos.Add(t.Usuario1);
+                }
+            }
+            var amigos = from a in _context.TUsuario where id_amigos.Contains(a.UserId) orderby a.Nome ascending select a;
+            return Json(amigos);
+        }
+
+
+        [HttpGet]
+        //[Authorize("Bearer")]
+        [Route("amizadespendentes/{id}")]
+        public IActionResult AmizadesPendentes(int id){
+            var amizadesPendentes = _context.TAmizade.Where(a => a.Usuario2 == id && a.Status == "Pendente" );
+            return Json(amizadesPendentes);
+        }
+
+
+
+        [HttpGet]
+        //[Authorize("Bearer")]
         [Route("historias/{id}")]
         public ActionResult GetHistorias(int id)
         {
             //Historias do perfil
             IEnumerable<THistoria> historias = _context.THistoria.Where(h => h.UserId == id);
+            foreach(THistoria th in historias){
+                bool verificador = _context.TLikeDislike.Any(ld => ld.UserId == id && ld.HistoriaId == th.Id);
+                if(verificador){
+                    TLikeDislike temp = _context.TLikeDislike.Where(ld => ld.UserId == id && ld.HistoriaId == th.Id).First();
+                    if(temp.LikeDislike == true){
+                        th.deulike = 1;
+                    }else{
+                        th.deulike = 2;
+                    }
+                }else{
+                    th.deulike = 0;
+                }
+            }
             return Json(historias);
+        }
+
+
+
+        [HttpGet]
+        //[Authorize("Bearer")]
+        [Route("feedprincipal/{id}")]
+        public ActionResult FeedPrincipal(int id)
+        {
+            try{
+                var amizades = _context.TAmizade.Where(a => (a.Usuario1 == id || a.Usuario2 == id) && a.Status == "Aprovada");
+                List<int> id_amigos = new List<int>();
+                id_amigos.Add(id);
+                foreach(TAmizade t in amizades){
+                    if(t.Usuario1 == id){
+                        id_amigos.Add(t.Usuario2);
+                    }else{
+                        id_amigos.Add(t.Usuario1);
+                    }
+                }
+
+                var historias_filtradas = from h in _context.THistoria where id_amigos.Contains(h.UserId) orderby h.Data descending select h;            
+                return Json(historias_filtradas);
+            }catch(Exception){
+                return StatusCode(500);
+            }
         }
 
 

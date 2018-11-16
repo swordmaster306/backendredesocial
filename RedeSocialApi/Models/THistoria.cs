@@ -5,6 +5,9 @@ namespace RedeSocialApi.Models
 {
     public partial class THistoria
     {
+
+        public int deulike;
+
         public THistoria()
         {
             TComentario = new HashSet<TComentario>();

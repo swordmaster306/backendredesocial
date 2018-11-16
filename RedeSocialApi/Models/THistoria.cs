@@ -15,6 +15,9 @@ namespace RedeSocialApi.Models
         public int UserId { get; set; }
         public string Mensagem { get; set; }
         public string Foto { get; set; }
+        public int? Likes { get; set; }
+        public int? Dislikes { get; set; }
+        public int? QtdComentarios { get; set; }
         public DateTime? Data { get; set; }
 
         public TUsuario User { get; set; }

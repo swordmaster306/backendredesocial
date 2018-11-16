@@ -18,6 +18,8 @@ namespace RedeSocialApi.Models
         public string Nome { get; set; }
         public string Email { get; set; }
         public string Senha { get; set; }
+        public int? QtdAmigos { get; set; }
+        public int? QtdHistorias { get; set; }
         public string FotoPerfil { get; set; }
 
         public ICollection<TAmizade> TAmizadeUsuario1Navigation { get; set; }

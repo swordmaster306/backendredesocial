@@ -21,14 +21,6 @@ namespace RedeSocialApi.Models
         public virtual DbSet<TLikeDislike> TLikeDislike { get; set; }
         public virtual DbSet<TUsuario> TUsuario { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=redesocialdb;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-            }
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,7 +30,10 @@ namespace RedeSocialApi.Models
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.Aprovada).HasColumnName("aprovada");
+                entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Usuario1).HasColumnName("usuario1");
 
@@ -65,7 +60,8 @@ namespace RedeSocialApi.Models
 
                 entity.Property(e => e.Data)
                     .HasColumnName("data")
-                    .HasColumnType("date");
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.HistoriaId).HasColumnName("historia_id");
 
@@ -94,13 +90,26 @@ namespace RedeSocialApi.Models
 
                 entity.Property(e => e.Data)
                     .HasColumnName("data")
-                    .HasColumnType("date");
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Dislikes)
+                    .HasColumnName("dislikes")
+                    .HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.Foto)
                     .HasColumnName("foto")
                     .IsUnicode(false);
 
+                entity.Property(e => e.Likes)
+                    .HasColumnName("likes")
+                    .HasDefaultValueSql("((0))");
+
                 entity.Property(e => e.Mensagem).HasColumnName("mensagem");
+
+                entity.Property(e => e.QtdComentarios)
+                    .HasColumnName("qtd_comentarios")
+                    .HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.UserId).HasColumnName("user_id");
 
@@ -159,6 +168,14 @@ namespace RedeSocialApi.Models
                     .HasColumnName("nome")
                     .HasMaxLength(255)
                     .IsUnicode(false);
+
+                entity.Property(e => e.QtdAmigos)
+                    .HasColumnName("qtd_amigos")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.QtdHistorias)
+                    .HasColumnName("qtd_historias")
+                    .HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.Senha)
                     .IsRequired()

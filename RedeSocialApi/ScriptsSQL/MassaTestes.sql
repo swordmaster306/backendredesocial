@@ -14,36 +14,29 @@ insert into t_usuario(nome,email,senha) values ('Pedro','pedro@outlook.com','ped
 
 
 ------Amizades de teste
-insert into t_amizade(usuario1,usuario2,status) values(0,1,'Aprovada');
-insert into t_amizade(usuario1,usuario2,status) values(1,0,'Aprovada');
+insert into t_amizade(usuario1,usuario2,status) values(0,1,'Pendente');
+update t_amizade set status = 'Aprovada' where usuario1 = 0 and usuario2 = 1 
 
-insert into t_amizade(usuario1,usuario2,status) values(0,2,'Aprovada');
-insert into t_amizade(usuario1,usuario2,status) values(2,0,'Aprovada');
+insert into t_amizade(usuario1,usuario2,status) values(0,2,'Pendente');
+update t_amizade set status = 'Aprovada' where usuario1 = 0 and usuario2 = 2 
 
-insert into t_amizade(usuario1,usuario2,status) values(0,3,'Aprovada');
-insert into t_amizade(usuario1,usuario2,status) values(3,0,'Aprovada');
 
-insert into t_amizade(usuario1,usuario2,status) values(0,4,'Aprovada');
-insert into t_amizade(usuario1,usuario2,status) values(4,0,'Aprovada');
+insert into t_amizade(usuario1,usuario2,status) values(0,3,'Pendente');
+update t_amizade set status = 'Aprovada' where usuario1 = 0 and usuario2 = 3 
 
-insert into t_amizade(usuario1,usuario2,status) values(1,2,'Aprovada');
-insert into t_amizade(usuario1,usuario2,status) values(2,1,'Aprovada');
+
+insert into t_amizade(usuario1,usuario2,status) values(0,4,'Pendente');
+update t_amizade set status = 'Aprovada' where usuario1 = 0 and usuario2 = 4 
+
+insert into t_amizade(usuario1,usuario2,status) values(1,2,'Pendente');
+update t_amizade set status = 'Aprovada' where usuario1 = 1 and usuario2 = 2
 
 
 insert into t_amizade(usuario1,usuario2,status) values(4,5,'Pendente');
-insert into t_amizade(usuario1,usuario2,status) values(5,4,'Pendente');
-
-insert into t_amizade(usuario1,usuario2,status) values(5,6,'Aprovada');
-insert into t_amizade(usuario1,usuario2,status) values(6,5,'Aprovada');
-
-insert into t_amizade(usuario1,usuario2,status) values(7,0,'Aprovada');
-insert into t_amizade(usuario1,usuario2,status) values(0,7,'Aprovada');
-
-insert into t_amizade(usuario1,usuario2,status) values(7,3,'Negada');
-insert into t_amizade(usuario1,usuario2,status) values(3,7,'Negada');
-
+insert into t_amizade(usuario1,usuario2,status) values(5,6,'Pendente');
+insert into t_amizade(usuario1,usuario2,status) values(7,0,'Pendente');
+insert into t_amizade(usuario1,usuario2,status) values(7,3,'Pendente');
 insert into t_amizade(usuario1,usuario2,status) values(6,7,'Pendente');
-insert into t_amizade(usuario1,usuario2,status) values(7,6,'Pendente');
 
 
 -------Historias de teste
@@ -79,3 +72,18 @@ insert into t_comentario(historia_id,user_id,mensagem) values (4,0,'De fato')
 insert into t_comentario(historia_id,user_id,mensagem) values (3,0,'Calma shodi') 
 insert into t_comentario(historia_id,user_id,mensagem) values (3,3,'Tb acho, na moral...') 
 insert into t_comentario(historia_id,user_id,mensagem) values (3,1,'Não uso muito, mas sei lá, vamos fazer um simulador de Dória') 
+
+
+
+select * from t_usuario
+select * from t_amizade
+select * from t_historia
+select * from t_comentario
+select * from t_like_dislike
+
+
+drop table  t_like_dislike
+drop table  t_comentario
+drop table  t_historia
+drop table  t_amizade
+drop table  t_usuario

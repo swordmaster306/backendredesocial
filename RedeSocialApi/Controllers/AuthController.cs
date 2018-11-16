@@ -45,6 +45,7 @@ namespace RedeSocialApi.Controllers
         }
 
 
+
         [HttpPost]
         [AllowAnonymous]
         [Route("autenticar")]
@@ -65,7 +66,7 @@ namespace RedeSocialApi.Controllers
             }
             bool credenciaisValidas = false;
 
-            if(usuario != null && !String.IsNullOrWhiteSpace(usuario.Email))
+            if (usuario != null && !String.IsNullOrWhiteSpace(usuario.Email))
             {
                 credenciaisValidas = (user != null &&
                     user.Senha == usuario.Senha);

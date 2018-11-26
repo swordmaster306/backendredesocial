@@ -31,8 +31,8 @@ namespace RedeSocialApi.Controllers
         [Route("adicionaramigo")]
         public IActionResult AdicionarAmigo(int usuario1_id,int usuario2_id){
             try{
-                TAmizade amizadeAntiga = _context.TAmizade.Where(a => (a.Usuario1 == usuario1_id && a.Usuario2 == usuario2_id) || (a.Usuario1 == usuario2_id && a.Usuario2 ==usuario1_id)).First();
-                if(amizadeAntiga == null){
+                bool amizadeAntiga = _context.TAmizade.Any(a => (a.Usuario1 == usuario1_id && a.Usuario2 == usuario2_id) || (a.Usuario1 == usuario2_id && a.Usuario2 ==usuario1_id));
+                if(!amizadeAntiga){
                     TAmizade amizade = new TAmizade();
                     amizade.Usuario1 = usuario1_id;
                     amizade.Usuario2 = usuario2_id;
@@ -40,7 +40,8 @@ namespace RedeSocialApi.Controllers
                     _context.TAmizade.Add(amizade);
                     _context.SaveChanges();
                 }else{
-                    amizadeAntiga.Status = "Pendente";
+                    TAmizade amizade = _context.TAmizade.Where(a => (a.Usuario1 == usuario1_id && a.Usuario2 == usuario2_id) || (a.Usuario1 == usuario2_id && a.Usuario2 ==usuario1_id)).First();
+                    amizade.Status = "Pendente";
                     _context.SaveChanges();
                 }
                 return StatusCode(200);
@@ -133,10 +134,15 @@ namespace RedeSocialApi.Controllers
         [Route("deletarhistoria")]
         public IActionResult DeletarHistoria(THistoria historia){
             try{
-                _context.THistoria.Remove(historia);
+                THistoria hist = _context.THistoria.Find(historia.Id);
+                _context.TComentario.RemoveRange(_context.TComentario.Where(c => c.HistoriaId == hist.Id));
+                _context.TLikeDislike.RemoveRange(_context.TLikeDislike.Where(c => c.HistoriaId == hist.Id));
+                _context.SaveChanges();
+                _context.THistoria.Remove(hist);
                 _context.SaveChanges();
                 return StatusCode(200);
-            }catch(Exception){
+            }catch(Exception excep){
+                System.Console.WriteLine(excep.Message);
                 return StatusCode(500);
             }
         }      

@@ -7,6 +7,7 @@ namespace RedeSocialApi.Models
     {
 
         public int deulike;
+        public String username;
 
         public THistoria()
         {

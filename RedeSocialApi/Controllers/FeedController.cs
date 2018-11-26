@@ -24,10 +24,10 @@ namespace RedeSocialApi.Controllers
 
         [HttpGet]
         //[Authorize("Bearer")]
-        [Route("buscaramigos")]
-        public ActionResult BuscarAmigos(TUsuario usuario)
+        [Route("buscaramigos/{nome}")]
+        public ActionResult BuscarAmigos(String nome)
         {
-            var resultado = from d in _context.TUsuario where d.Nome.ToUpper().Contains(usuario.Nome) select new { d.UserId, d.Nome, d.FotoPerfil };
+            var resultado = from d in _context.TUsuario where d.Nome.ToUpper().Contains(nome) select new { d.UserId, d.Nome, d.FotoPerfil };
             return Json(resultado);
         }
 
@@ -44,7 +44,7 @@ namespace RedeSocialApi.Controllers
                     id_amigos.Add(t.Usuario1);
                 }
             }
-            var amigos = from a in _context.TUsuario where id_amigos.Contains(a.UserId) orderby a.Nome ascending select a;
+            var amigos = from a in _context.TUsuario where id_amigos.Contains(a.UserId) orderby a.Nome ascending select new {a.UserId,a.Nome,a.Email,a.QtdAmigos,a.QtdHistorias,a.FotoPerfil};
             return Json(amigos);
         }
 
@@ -78,6 +78,8 @@ namespace RedeSocialApi.Controllers
                 }else{
                     th.deulike = 0;
                 }
+                TUsuario user = (from usuario in _context.TUsuario where th.UserId == usuario.UserId select usuario).First();
+                th.username = user.Nome;
             }
             return Json(historias);
         }
@@ -101,7 +103,22 @@ namespace RedeSocialApi.Controllers
                     }
                 }
 
-                var historias_filtradas = from h in _context.THistoria where id_amigos.Contains(h.UserId) orderby h.Data descending select h;            
+                var historias_filtradas = from h in _context.THistoria where id_amigos.Contains(h.UserId) orderby h.Data descending select h;
+                foreach(THistoria th in historias_filtradas){
+                    bool verificador = _context.TLikeDislike.Any(ld => ld.UserId == id && ld.HistoriaId == th.Id);
+                    if(verificador){
+                        TLikeDislike temp = _context.TLikeDislike.Where(ld => ld.UserId == id && ld.HistoriaId == th.Id).First();
+                        if(temp.LikeDislike == true){
+                            th.deulike = 1;
+                        }else{
+                            th.deulike = 2;
+                        }
+                    }else{
+                        th.deulike = 0;
+                    }
+                    TUsuario user = (from usuario in _context.TUsuario where th.UserId == usuario.UserId select usuario).First();
+                    th.username = user.Nome;
+                }       
                 return Json(historias_filtradas);
             }catch(Exception){
                 return StatusCode(500);

@@ -103,6 +103,8 @@ namespace RedeSocialApi.Controllers
 
                 return new
                 {
+                    userid = _context.TUsuario.Where(u => u.Email == usuario.Email).First().UserId,
+                    username = _context.TUsuario.Where(u => u.Email == usuario.Email).First().Nome,
                     authenticated = true,
                     created = dataCriacao.ToString("yyyy-MM-dd HH:mm:ss"),
                     expiration = dataExpiracao.ToString("yyyy-MM-dd HH:mm:ss"),

@@ -33,7 +33,7 @@ namespace RedeSocialApi
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddDbContext<redesocialdbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<redesocialdbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("AlternateConnection")));
 
             var signingConfigurations = new SigningConfigurations();
             services.AddSingleton(signingConfigurations);
